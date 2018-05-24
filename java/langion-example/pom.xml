@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>langion</artifactId>
 		<groupId>com.github.langion</groupId>
-		<version>1.1</version>
+		<version>1.2-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>langion-example</artifactId>
@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>com.github.langion</groupId>
 			<artifactId>langion-maven-plugin</artifactId>
-			<version>1.1</version>
+			<version>1.2-SNAPSHOT</version>
 			<type>maven-plugin</type>
 		</dependency>
 	</dependencies>
@@ -39,7 +39,7 @@
 			<plugin>
 				<groupId>com.github.langion</groupId>
 				<artifactId>langion-maven-plugin</artifactId>
-				<version>1.1</version>
+				<version>1.2-SNAPSHOT</version>
 				<executions>
 					<execution>
 						<configuration>
