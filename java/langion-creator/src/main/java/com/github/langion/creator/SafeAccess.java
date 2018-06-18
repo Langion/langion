@@ -8,6 +8,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
@@ -21,6 +22,7 @@ public interface SafeAccess {
 
 		try {
 			Method[] value = clazz.getDeclaredMethods();
+			value = Stream.of(value).filter(v -> !v.isSynthetic()).toArray(Method[]::new);
 			result = Optional.ofNullable(value);
 		} catch (Throwable e) {
 			this.showError(e, clazz);
@@ -294,6 +296,7 @@ public interface SafeAccess {
 
 		try {
 			Field[] value = clazz.getDeclaredFields();
+			value = Stream.of(value).filter(v -> !v.isSynthetic()).toArray(Field[]::new);
 			result = Optional.ofNullable(value);
 		} catch (Throwable e) {
 			this.showError(e, clazz);
@@ -584,3 +587,4 @@ public interface SafeAccess {
 	}
 
 }
+
