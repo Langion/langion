@@ -1,6 +1,6 @@
 {
   "name": "@langion/langion",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Langion format definition",
   "homepage": "https://github.com/Langion/langion#readme",
   "bugs": {
@@ -23,6 +23,6 @@
   },
   "devDependencies": {
     "ts-lint": "^4.5.1",
-    "typescript": "^2.8.3"
+    "typescript": "^2.9.2"
   }
 }
