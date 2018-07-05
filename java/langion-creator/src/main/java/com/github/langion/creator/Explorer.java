@@ -348,7 +348,7 @@ public class Explorer {
 			return Optional.empty();
 		}
 
-		String clazzPath = canonicalName.replaceAll("\\.", File.separator);
+		String clazzPath = canonicalName.replaceAll("\\.", "\\" + File.separator);
 		List<String> srcBaseJavaFolders = this.config.srcBaseJavaFolders.get();
 
 		Optional<CompilationUnit> cu = srcBaseJavaFolders.stream().map(s -> {
