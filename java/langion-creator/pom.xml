@@ -4,7 +4,7 @@
   <parent>
     <artifactId>langion</artifactId>
     <groupId>com.github.langion</groupId>
-    <version>1.7-SNAPSHOT</version>
+    <version>1.7</version>
   </parent>
 
   <artifactId>langion-creator</artifactId>
@@ -29,7 +29,7 @@
     <dependency>
     	<groupId>com.github.langion</groupId>
     	<artifactId>langion-form</artifactId>
-    	<version>1.7-SNAPSHOT</version>
+    	<version>1.7</version>
     </dependency>
     <dependency>
     	<groupId>com.google.guava</groupId>

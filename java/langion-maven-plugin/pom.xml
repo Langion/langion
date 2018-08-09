@@ -4,7 +4,7 @@
   <parent>
     <artifactId>langion</artifactId>
     <groupId>com.github.langion</groupId>
-    <version>1.7-SNAPSHOT</version>
+    <version>1.7</version>
   </parent>
 
   <artifactId>langion-maven-plugin</artifactId>
@@ -72,7 +72,7 @@
     <dependency>
     	<groupId>com.github.langion</groupId>
     	<artifactId>langion-creator</artifactId>
-    	<version>1.7-SNAPSHOT</version>
+    	<version>1.7</version>
     </dependency>
   </dependencies>
 
