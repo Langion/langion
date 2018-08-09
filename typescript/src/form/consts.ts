@@ -8,6 +8,7 @@ export enum Kind {
     Interface = "Interface",
     Langion = "Langion",
     Method = "Method",
+    Constructor = "Constructor",
     Modifier = "Modifier",
     Package = "Package",
     Type = "Type",

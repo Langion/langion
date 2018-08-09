@@ -10,6 +10,10 @@ public class Test extends Onetest {
 
 	public int two;
 
+	public <Ter> void callFriend(Ter v) {
+
+	}
+
 }
 
 /**
@@ -19,7 +23,5 @@ public class Test extends Onetest {
  *
  */
 class Onetest {
-
-	
 
 }

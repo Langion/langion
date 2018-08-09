@@ -3,6 +3,7 @@ package com.github.langion.creator;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -22,6 +23,7 @@ import java.util.stream.Stream;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -29,6 +31,7 @@ import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.langion.creator.creators.AnnotationCreator;
 import com.github.langion.creator.creators.ArgumentCreator;
 import com.github.langion.creator.creators.ClassCreator;
+import com.github.langion.creator.creators.ConstructorCreator;
 import com.github.langion.creator.creators.EntityCreator;
 import com.github.langion.creator.creators.EnumCreator;
 import com.github.langion.creator.creators.FieldCreator;
@@ -173,6 +176,12 @@ public class Explorer {
 		}
 
 		MethodCreator creator = new MethodCreator(dec, method, this);
+		creator.decode();
+		return creator.entity;
+	}
+	
+	public MethodEntity make(Constructor<?> constructor, Class<?> clazz, Optional<ConstructorDeclaration> optionalConstructor) {
+		ConstructorCreator creator = new ConstructorCreator(optionalConstructor, constructor, clazz, this);
 		creator.decode();
 		return creator.entity;
 	}

@@ -16,7 +16,8 @@ export interface ClassEntity extends Entity {
     Annotations: Record<string, AnnotationEntity>;
     Fields: Record<string, FieldEntity>;
     Implements: Record<string, TypeEntity>;
-    Methods: Record<string, MethodEntity>;
+    Methods: Record<string, MethodEntity[]>;
+    Constructors: MethodEntity[];
     Variables: Record<string, VariableEntity>;
 }
 
@@ -50,7 +51,7 @@ export interface InterfaceEntity extends Entity {
     Modifiers: ModifierEntity;
     Annotations: Record<string, AnnotationEntity>;
     Extends: Record<string, TypeEntity>;
-    Methods: Record<string, MethodEntity>;
+    Methods: Record<string, MethodEntity[]>;
     Variables: Record<string, VariableEntity>;
 }
 

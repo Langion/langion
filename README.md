@@ -91,7 +91,8 @@ Enum - Modifiers that applied to fields
 |Annotations|Map<string, [ValueEntity](#annotationentity)>|
 |Fields|Map<string, [FieldEntity](#fieldentity)>|
 |Implements|Map<string, [TypeEntity](#typeentity)>|
-|Methods|Map<string, [MethodEntity](#methodentity)>|
+|Methods|Map<string, Array<[MethodEntity](#methodentity)>>|
+|Constructors|Array<[MethodEntity](#methodentity)>|
 |Variables|Map<string, [VariableEntity](#variableentity)>|
 
 ### EnumEntity
@@ -129,7 +130,7 @@ Enum - Modifiers that applied to fields
 |Modifiers|[ModifierEntity](#modifierentity)|
 |Annotations|Map<string, [AnnotationEntity](#annotationentity)>|
 |Extends|Map<string, [TypeEntity](#typeentity)>|
-|Methods|Map<string, [MethodEntity](#methodentity)>|
+|Methods|Map<string, Array<[MethodEntity](#methodentity)>>|
 |Variables|Map<string, [VariableEntity](#variableentity)>|
 
 ### Langion

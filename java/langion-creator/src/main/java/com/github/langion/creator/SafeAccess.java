@@ -1,6 +1,8 @@
 package com.github.langion.creator;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -10,12 +12,29 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import com.github.javaparser.ast.body.CallableDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 
 public interface SafeAccess {
+	
+	public default Optional<Constructor<?>[]> getDeclaredConstructors(Class<?> clazz) {
+		Optional<Constructor<?>[]> result = null;
+
+		try {
+			Constructor<?>[] value = clazz.getDeclaredConstructors();
+			value = Stream.of(value).filter(v -> !v.isSynthetic()).toArray(Constructor<?>[]::new);
+			result = Optional.ofNullable(value);
+		} catch (Throwable e) {
+			this.showError(e, clazz);
+			result = Optional.empty();
+		}
+
+		return result;
+	}
 
 	public default Optional<Method[]> getDeclaredMethods(Class<?> clazz) {
 		Optional<Method[]> result = null;
@@ -32,7 +51,7 @@ public interface SafeAccess {
 		return result;
 	}
 
-	public default Optional<Integer> getModifiers(Method method) {
+	public default Optional<Integer> getModifiers(Executable method) {
 		Optional<Integer> result = null;
 		Class<?> clazz = null;
 
@@ -148,7 +167,36 @@ public interface SafeAccess {
 			return result;
 		}
 
-		MethodDeclaration node = optionalNode.get();
+		CallableDeclaration<?> node = optionalNode.get();
+		Class<?> clazz = null;
+
+		try {
+			clazz = method.getDeclaringClass();
+
+			com.github.javaparser.ast.body.Parameter optionalFieldDec = node.getParameter(pos);
+
+			if (optionalFieldDec == null) {
+				return result;
+			}
+
+			result = Optional.ofNullable(optionalFieldDec);
+		} catch (Throwable e) {
+			this.showError(e, clazz);
+			result = Optional.empty();
+		}
+
+		return result;
+	}
+	
+	public default Optional<com.github.javaparser.ast.body.Parameter> getParameter(Constructor<?> method,
+			Optional<ConstructorDeclaration> optionalNode, Integer pos) {
+		Optional<com.github.javaparser.ast.body.Parameter> result = null;
+
+		if (!optionalNode.isPresent()) {
+			return result;
+		}
+
+		CallableDeclaration<?> node = optionalNode.get();
 		Class<?> clazz = null;
 
 		try {
@@ -169,7 +217,7 @@ public interface SafeAccess {
 		return result;
 	}
 
-	public default Optional<Parameter[]> getParameters(Method method) {
+	public default Optional<Parameter[]> getParameters(Executable method) {
 		Optional<Parameter[]> result = null;
 		Class<?> clazz = null;
 
@@ -215,7 +263,7 @@ public interface SafeAccess {
 		return result;
 	}
 
-	public default Optional<Annotation[]> getDeclaredAnnotations(Method method) {
+	public default Optional<Annotation[]> getDeclaredAnnotations(Executable method) {
 		Optional<Annotation[]> result = null;
 		Class<?> clazz = null;
 
@@ -261,7 +309,7 @@ public interface SafeAccess {
 		return result;
 	}
 
-	public default Optional<TypeVariable<?>[]> getTypeParameters(Method method) {
+	public default Optional<TypeVariable<?>[]> getTypeParameters(Executable method) {
 		Optional<TypeVariable<?>[]> result = null;
 		Class<?> clazz = null;
 
@@ -322,6 +370,7 @@ public interface SafeAccess {
 
 	public default Optional<List<MethodDeclaration>> getMethodsByName(Method method,
 			Optional<ClassOrInterfaceDeclaration> optionalNode) {
+		
 		Optional<List<MethodDeclaration>> result = Optional.empty();
 
 		if (!optionalNode.isPresent()) {
@@ -344,6 +393,38 @@ public interface SafeAccess {
 			List<MethodDeclaration> methodsDec = optionalMethodsDec.get();
 
 			result = Optional.ofNullable(methodsDec);
+		} catch (Throwable e) {
+			this.showError(e, clazz);
+			result = Optional.empty();
+		}
+
+		return result;
+	}
+	
+	public default Optional<ConstructorDeclaration> getConstructorByParameterTypes(Constructor<?> constructor,
+			Optional<ClassOrInterfaceDeclaration> optionalNode) {
+		
+		Optional<ConstructorDeclaration> result = Optional.empty();
+
+		if (!optionalNode.isPresent()) {
+			return result;
+		}
+
+		ClassOrInterfaceDeclaration node = optionalNode.get();
+		Class<?> clazz = null;
+
+		try {
+			clazz = constructor.getClass();
+			Class<?>[] parameterTypes = constructor.getParameterTypes();
+			Optional<ConstructorDeclaration> declarations = node.getConstructorByParameterTypes(parameterTypes);
+
+			if (!declarations.isPresent()) {
+				return result;
+			}
+
+			ConstructorDeclaration constructorDec = declarations.get();
+
+			result = Optional.ofNullable(constructorDec);
 		} catch (Throwable e) {
 			this.showError(e, clazz);
 			result = Optional.empty();
@@ -391,7 +472,42 @@ public interface SafeAccess {
 			return result;
 		}
 
-		MethodDeclaration node = optionalNode.get();
+		CallableDeclaration<?> node = optionalNode.get();
+		Optional<Class<? extends Annotation>> optionalType = this.getAnnotationType(annotation);
+
+		if (!optionalType.isPresent()) {
+			return result;
+		}
+
+		Class<? extends Annotation> type = optionalType.get();
+
+		try {
+			Optional<AnnotationExpr> optionalValue = node.getAnnotationByClass(type);
+
+			if (!optionalValue.isPresent()) {
+				return result;
+			}
+
+			AnnotationExpr value = optionalValue.get();
+
+			result = Optional.ofNullable(value);
+		} catch (Throwable e) {
+			this.showError(e, type);
+			result = Optional.empty();
+		}
+
+		return result;
+	}
+	
+	public default Optional<AnnotationExpr> getAnnotationByClassFromConstructor(Annotation annotation,
+			Optional<ConstructorDeclaration> optionalNode) {
+		Optional<AnnotationExpr> result = null;
+
+		if (!optionalNode.isPresent()) {
+			return result;
+		}
+
+		CallableDeclaration<?> node = optionalNode.get();
 		Optional<Class<? extends Annotation>> optionalType = this.getAnnotationType(annotation);
 
 		if (!optionalType.isPresent()) {

@@ -1,15 +1,18 @@
 package com.github.langion.creator.creators;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
@@ -39,6 +42,7 @@ public class ClassCreator extends EntityCreator<ClassOrInterfaceDeclaration, Cla
 		this.parseVariables();
 		this.parseFields();
 		this.parseMethods();
+		this.parseConstructors();
 	}
 
 	private void parseModifiers() {
@@ -147,12 +151,39 @@ public class ClassCreator extends EntityCreator<ClassOrInterfaceDeclaration, Cla
 
 		Method[] declaredMethods = optionalDeclaredMethods.get();
 
-		Stream.of(declaredMethods).map(m -> this.parseMethod(m)).forEach(m -> this.entity.Methods.put(m.Name, m));
+		Stream.of(declaredMethods).map(m -> this.parseMethod(m)).forEach(m -> {
+			List<MethodEntity> methods = this.entity.Methods.get(m.Name);
+
+			if (methods == null) {
+				methods = new ArrayList<MethodEntity>();
+				this.entity.Methods.put(m.Name, methods);
+			}
+
+			methods.add(m);
+		});
 	}
 
 	private MethodEntity parseMethod(Method method) {
 		Optional<List<MethodDeclaration>> optionalMethods = this.getMethodsByName(method, this.node);
 		MethodEntity result = this.explorer.make(method, optionalMethods);
+		return result;
+	}
+
+	private void parseConstructors() {
+		Optional<Constructor<?>[]> optionalDeclaredMethods = this.getDeclaredConstructors(this.clazz);
+
+		if (!optionalDeclaredMethods.isPresent()) {
+			return;
+		}
+
+		Constructor<?>[] declaredMethods = optionalDeclaredMethods.get();
+
+		Stream.of(declaredMethods).map(m -> this.parseConstructor(m)).forEach(m -> this.entity.Constructors.add(m));
+	}
+
+	private MethodEntity parseConstructor(Constructor<?> constructor) {
+		Optional<ConstructorDeclaration> optionalConstructor = this.getConstructorByParameterTypes(constructor, this.node);
+		MethodEntity result = this.explorer.make(constructor, this.clazz, optionalConstructor);
 		return result;
 	}
 

@@ -1,6 +1,8 @@
 package com.github.langion.creator.creators;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -63,6 +65,10 @@ public abstract class EntityCreator<T extends Node, E extends Entity> implements
 				if (value instanceof Entity) {
 					JSONObject converted = this.toJson((Entity) value);
 					json.put(key, converted);
+				} else if (value instanceof List<?>) {
+					List<?> listValue = (List<?>) value;
+					List<JSONObject> converted = this.listToJson(listValue);
+					json.put(key, converted);
 				} else if (value instanceof Map<?, ?>) {
 					JSONObject map = this.mapToJson((Map<?, ?>) value);
 					json.put(key, map);
@@ -103,6 +109,10 @@ public abstract class EntityCreator<T extends Node, E extends Entity> implements
 				Entity entityValue = (Entity) mapValue;
 				JSONObject converted = this.toJson(entityValue);
 				jsonMap.put(k.toString(), converted);
+			} else if (mapValue instanceof List<?>) {
+				List<?> listValue = (List<?>) mapValue;
+				List<JSONObject> converted = this.listToJson(listValue);
+				jsonMap.put(k.toString(), converted);
 			} else {
 				jsonMap.put(k.toString(), mapValue);
 			}
@@ -110,6 +120,20 @@ public abstract class EntityCreator<T extends Node, E extends Entity> implements
 		});
 
 		return jsonMap;
+	}
+
+	private List<JSONObject> listToJson(List<?> listValue) {
+		List<JSONObject> convertedList = new ArrayList<JSONObject>();
+
+		listValue.forEach(v -> {
+			if (v instanceof Entity) {
+				Entity entityValue = (Entity) v;
+				JSONObject converted = this.toJson(entityValue);
+				convertedList.add(converted);
+			}
+		});
+
+		return convertedList;
 	}
 
 	private String getPrettyName(Object name) {
