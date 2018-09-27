@@ -100,6 +100,11 @@ Enum - Modifiers that applied to fields
 
 |Key|Type|Comment|
 |--|--|--|
+|Extends|[TypeEntity](#typeentity)|
+|Modifiers|[ModifierEntity](#modifierentity)|
+|Annotations|Map<string, [ValueEntity](#annotationentity)>|
+|Implements|Map<string, [TypeEntity](#typeentity)>|
+|Variables|Map<string, [VariableEntity](#variableentity)>|
 |Items|Map<string, string>|
 
 ### FieldEntity

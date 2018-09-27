@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 import com.github.javaparser.ast.body.CallableDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
+import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
@@ -458,6 +459,41 @@ public interface SafeAccess {
 			result = Optional.ofNullable(fieldDec);
 		} catch (Throwable e) {
 			this.showError(e, clazz);
+			result = Optional.empty();
+		}
+
+		return result;
+	}
+	
+	public default Optional<AnnotationExpr> getAnnotationByClassFromEnum(Annotation annotation,
+			Optional<EnumDeclaration> optionalNode) {
+		Optional<AnnotationExpr> result = null;
+
+		if (!optionalNode.isPresent()) {
+			return result;
+		}
+
+		EnumDeclaration node = optionalNode.get();
+		Optional<Class<? extends Annotation>> optionalType = this.getAnnotationType(annotation);
+
+		if (!optionalType.isPresent()) {
+			return result;
+		}
+
+		Class<? extends Annotation> type = optionalType.get();
+
+		try {
+			Optional<AnnotationExpr> optionalValue = node.getAnnotationByClass(type);
+
+			if (!optionalValue.isPresent()) {
+				return result;
+			}
+
+			AnnotationExpr value = optionalValue.get();
+
+			result = Optional.ofNullable(value);
+		} catch (Throwable e) {
+			this.showError(e, type);
 			result = Optional.empty();
 		}
 

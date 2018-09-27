@@ -30,6 +30,11 @@ export interface Entity {
 }
 
 export interface EnumEntity extends Entity {
+    Extends: TypeEntity;
+    Modifiers: ModifierEntity;
+    Annotations: Record<string, AnnotationEntity>;
+    Implements: Record<string, TypeEntity>;
+    Variables: Record<string, VariableEntity>;
     Items: Record<string, string>;
 }
 
